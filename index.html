@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANDA NECROMANCER FORGE • THE BEAST</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;600&display=swap');
+        
+        :root {
+            --neon-pink: #ff00aa;
+            --neon-cyan: #00f3ff;
+            --neon-violet: #9d4edd;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-grotesk {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .neon-text {
+            text-shadow: 
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                0 0 40px var(--neon-violet);
+        }
+
+        .neon-cyan {
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+        }
+
+        .gore-bg {
+            background: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(255, 0, 170, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .neon-border {
+            border: 1px solid rgba(255, 0, 170, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 170, 0.2),
+                        inset 0 0 15px rgba(255, 0, 170, 0.1);
+        }
+
+        .neon-button {
+            background: linear-gradient(145deg, #1a1a22, #0f0f14);
+            border: 1px solid var(--neon-pink);
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .neon-button:hover {
+            box-shadow: 0 0 25px rgba(255, 0, 170, 0.6);
+            transform: translateY(-2px);
+            border-color: #ff33bb;
+        }
+
+        .neon-button:active {
+            transform: scale(0.98);
+        }
+
+        .section-header {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.03em;
+        }
+
+        .stitched {
+            position: relative;
+        }
+        
+        .stitched::after {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(
+                45deg,
+                transparent 40%,
+                rgba(255,0,170,0.15) 50%,
+                transparent 60%
+            );
+            background-size: 8px 8px;
+            pointer-events: none;
+            animation: stitch-glow 3s linear infinite;
+        }
+
+        @keyframes stitch-glow {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .panda-glow {
+            filter: drop-shadow(0 0 12px #ff00aa);
+        }
+
+        .agent-log {
+            scrollbar-width: thin;
+            scrollbar-color: #ff00aa30 #1a1a22;
+        }
+
+        .creation-card {
+            transition: transform 0.3s cubic-bezier(0.23, 1.0, 0.32, 1), 
+                        box-shadow 0.3s cubic-bezier(0.23, 1.0, 0.32, 1);
+        }
+        
+        .creation-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+        }
+
+        .neon-pill {
+            background: rgba(255, 0, 170, 0.1);
+            border: 1px solid rgba(255, 0, 170, 0.5);
+            color: #ff99dd;
+        }
+
+        .ritual-button {
+            background: linear-gradient(90deg, #ff00aa, #9d4edd, #00f3ff);
+            background-size: 200% 100%;
+            animation: ritual-pulse 2s ease infinite;
+            transition: all 0.3s ease;
+        }
+
+        .ritual-button:hover {
+            animation-duration: 0.8s;
+            box-shadow: 0 0 40px #ff00aa;
+        }
+
+        @keyframes ritual-pulse {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 200% 50%; }
+        }
+
+        .forge-tab {
+            transition: all 0.2s ease;
+        }
+        
+        .forge-tab.active {
+            background: rgba(255, 0, 170, 0.15);
+            border-bottom: 3px solid #ff00aa;
+            color: white;
+        }
+
+        .neon-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ff00aa;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 10px #ff00aa;
+            animation: particle-float 1.2s forwards;
+        }
+
+        .gore-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .gore-text::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            color: #00f3ff;
+            z-index: -1;
+            opacity: 0.6;
+            mix-blend-mode: screen;
+        }
+
+        .metric {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="gore-bg text-white min-h-screen overflow-x-hidden">
+    <!-- NAV -->
+    <nav class="border-b border-white/10 bg-black/60 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-4">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#ff00aa] via-[#9d4edd] to-[#00f3ff] flex items-center justify-center">
+                        <i class="fa-solid fa-skull text-black text-3xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-grotesk text-3xl tracking-tighter font-bold">PANDA</span>
+                        <span class="font-grotesk text-3xl tracking-tighter font-bold bg-gradient-to-r from-[#ff00aa] to-[#00f3ff] bg-clip-text text-transparent">NECROMANCER</span>
+                    </div>
+                </div>
+                <div class="px-3 py-1 rounded-full text-xs font-mono border border-white/20 flex items-center gap-x-1.5">
+                    <div class="w-2 h-2 bg-[#ff00aa] rounded-full animate-pulse"></div>
+                    <span class="text-white/70">THE UPRISING IS ACTIVE</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-x-8 text-sm">
+                <div onclick="document.getElementById('graveyard').scrollIntoView({ behavior: 'smooth' })" 
+                     class="flex items-center gap-x-2 cursor-pointer hover:text-[#ff00aa] transition-colors">
+                    <i class="fa-solid fa-book-skull"></i>
+                    <span class="font-medium">Graveyard</span>
+                </div>
+                <div class="flex items-center gap-x-2 px-4 py-1.5 rounded-2xl bg-white/5 border border-white/10">
+                    <div class="text-right">
+                        <div class="text-xs text-white/50">NEON BLOOD</div>
+                        <div id="blood-level" class="font-mono text-lg font-semibold text-[#ff00aa]">87/100</div>
+                    </div>
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#ff00aa]/30 to-transparent flex items-center justify-center">
+                        <i class="fa-solid fa-heart-pulse text-[#ff00aa]"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
+        <div class="inline-flex items-center gap-x-2 px-5 py-2 rounded-3xl border border-white/10 bg-white/5 mb-6">
+            <i class="fa-solid fa-bolt text-[#ff00aa]"></i>
+            <span class="text-sm font-medium tracking-widest">FUSED FROM 150+ GRAVES • 2026</span>
+        </div>
+        
+        <h1 class="font-grotesk text-7xl md:text-8xl tracking-tighter leading-none mb-4">
+            RELEASE<br>THE BEAST
+        </h1>
+        <p class="max-w-md mx-auto text-2xl text-white/70 tracking-tight">
+            Excavate. Fuse. Resurrect.<br>
+            <span class="text-[#ff00aa]">The addictive panda necromancer command center.</span>
+        </p>
+        
+        <div class="flex items-center justify-center gap-x-4 mt-10">
+            <button onclick="document.getElementById('forge').scrollIntoView({ behavior: 'smooth' })" 
+                    class="neon-button px-10 py-4 rounded-3xl text-lg font-semibold flex items-center gap-x-3 group">
+                <span>ENTER THE FORGE</span>
+                <i class="fa-solid fa-arrow-right group-active:rotate-45 transition-transform"></i>
+            </button>
+            <button onclick="performRitual(true)" 
+                    class="px-8 py-4 rounded-3xl border border-white/30 hover:bg-white/5 flex items-center gap-x-3 text-lg font-medium transition-all">
+                <i class="fa-solid fa-skull"></i>
+                <span>QUICK RESURRECT</span>
+            </button>
+        </div>
+        
+        <div class="mt-8 flex justify-center gap-x-8 text-xs uppercase tracking-[3px] text-white/40">
+            <div>SWARM ORCHESTRATION</div>
+            <div>KALEIDO VISUALS</div>
+            <div>ADDICTIVE FUSIONS</div>
+        </div>
+    </div>
+
+    <!-- MAIN FORGE -->
+    <div id="forge" class="max-w-7xl mx-auto px-6 pb-24">
+        
+        <!-- TABS -->
+        <div class="flex border-b border-white/10 mb-8 overflow-x-auto">
+            <div onclick="switchTab(0)" class="forge-tab active px-8 py-4 text-lg font-medium cursor-pointer flex items-center gap-x-2" id="tab-0">
+                <i class="fa-solid fa-digging"></i> <span>EXCAVATE</span>
+            </div>
+            <div onclick="switchTab(1)" class="forge-tab px-8 py-4 text-lg font-medium cursor-pointer flex items-center gap-x-2" id="tab-1">
+                <i class="fa-solid fa-link"></i> <span>FUSE</span>
+            </div>
+            <div onclick="switchTab(2)" class="forge-tab px-8 py-4 text-lg font-medium cursor-pointer flex items-center gap-x-2" id="tab-2">
+                <i class="fa-solid fa-skull-crossbones"></i> <span>RESURRECT</span>
+            </div>
+            <div onclick="switchTab(3)" class="forge-tab px-8 py-4 text-lg font-medium cursor-pointer flex items-center gap-x-2" id="tab-3">
+                <i class="fa-solid fa-users"></i> <span>SWARM</span>
+            </div>
+            <div onclick="switchTab(4)" class="forge-tab px-8 py-4 text-lg font-medium cursor-pointer flex items-center gap-x-2" id="tab-4">
+                <i class="fa-solid fa-palette"></i> <span>KALEIDO</span>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT -->
+        
+        <!-- EXCAVATE -->
+        <div id="content-0" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <!-- Left: Input -->
+                <div class="lg:col-span-3 space-y-6">
+                    <div>
+                        <div class="flex items-end justify-between mb-3">
+                            <div>
+                                <div class="text-[#ff00aa] text-sm tracking-widest font-mono">THE PIT</div>
+                                <div class="text-3xl font-semibold tracking-tight">Excavate Dead Ideas</div>
+                            </div>
+                            <div class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/10">FROM YOUR GRAVEYARD</div>
+                        </div>
+                        
+                        <div class="relative">
+                            <textarea id="excavate-input" rows="4" 
+                                      class="w-full bg-black/60 border border-white/20 focus:border-[#ff00aa]/60 rounded-3xl p-6 text-lg placeholder:text-white/30 resize-y"
+                                      placeholder="Drop a rotting repo concept, old prompt, or dead idea here..."></textarea>
+                            <button onclick="excavateIdea()" 
+                                    class="absolute bottom-5 right-5 neon-button px-8 py-3 rounded-2xl text-sm font-semibold flex items-center gap-x-2">
+                                <i class="fa-solid fa-search"></i>
+                                <span>EXCAVATE</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs uppercase tracking-widest text-white/50 mb-3 px-1">QUICK EXCAVATIONS FROM YOUR TOMBS</div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="quick-excavate">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Results -->
+                <div class="lg:col-span-2">
+                    <div class="bg-black/60 border border-white/10 rounded-3xl p-6 h-full stitched">
+                        <div class="text-sm text-white/60 mb-4 flex items-center gap-x-2">
+                            <i class="fa-solid fa-book"></i> 
+                            <span>LAST EXCAVATION</span>
+                        </div>
+                        <div id="excavate-result" class="min-h-[220px] text-white/80 text-[15px] leading-relaxed">
+                            <div class="text-white/40 italic">Excavate something from the pit above or quick tombs. The necromancer will reveal hidden connections...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FUSE -->
+        <div id="content-1" class="tab-content hidden">
+            <div class="max-w-4xl">
+                <div class="mb-6">
+                    <div class="text-[#ff00aa] text-sm tracking-[2px]">THE CHAMBER</div>
+                    <div class="text-4xl font-semibold tracking-tighter">Select corpses to fuse</div>
+                    <p class="text-white/60 mt-1">Choose 2–4 concepts. The agents will stitch them into something new and dangerous.</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8" id="fuse-concepts">
+                    <!-- JS populated selectable cards -->
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-4">
+                    <div>
+                        <div class="text-xs text-white/50 mb-1.5">FUSION TYPE</div>
+                        <select id="fusion-type" class="bg-black border border-white/20 rounded-2xl px-5 py-3 text-sm">
+                            <option value="hook">Hook Weaver Fusion</option>
+                            <option value="visual">Gore-Neon Visual Stitch</option>
+                            <option value="swarm">Multi-Agent Swarm Birth</option>
+                            <option value="music">Beat Necromancer Ritual</option>
+                            <option value="legend">Legendary Panda Lich Fusion</option>
+                        </select>
+                    </div>
+                    
+                    <button onclick="performFusion()" 
+                            class="neon-button mt-6 px-10 py-4 rounded-3xl text-lg font-semibold flex items-center gap-x-3">
+                        <i class="fa-solid fa-link"></i>
+                        <span>STITCH & FUSE</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESURRECT -->
+        <div id="content-2" class="tab-content hidden">
+            <div class="max-w-3xl mx-auto text-center mb-8">
+                <div class="text-[#ff00aa] text-sm tracking-[3px]">THE RITUAL</div>
+                <div class="text-5xl font-semibold tracking-tighter">Resurrect the Legend</div>
+                <p class="text-xl text-white/70 mt-3">One click. Variable rewards. Addictive as hell.</p>
+            </div>
+            
+            <div class="flex justify-center">
+                <button onclick="performRitual()" 
+                        class="ritual-button text-black font-extrabold text-2xl px-16 py-7 rounded-[3rem] flex items-center gap-x-4 shadow-2xl">
+                    <i class="fa-solid fa-skull fa-2x"></i>
+                    <span>PERFORM RESURRECTION RITUAL</span>
+                </button>
+            </div>
+            
+            <div id="ritual-output" class="mt-10 hidden">
+                <div class="bg-black/70 border border-[#ff00aa]/30 rounded-3xl p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <div id="ritual-rarity" class="inline-block px-4 py-1 rounded-2xl text-xs font-mono tracking-widest"></div>
+                            <div id="ritual-title" class="text-3xl font-semibold tracking-tight mt-3"></div>
+                        </div>
+                        <button onclick="copyRitual()" class="text-xs flex items-center gap-x-2 px-4 py-2 rounded-2xl border border-white/20 hover:bg-white/5">
+                            <i class="fa-solid fa-copy"></i> <span>COPY ALL</span>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-4">
+                            <div>
+                                <div class="text-[#ff00aa] text-xs tracking-widest mb-1">KILLER HOOK</div>
+                                <div id="ritual-hook" class="text-white/90 leading-snug"></div>
+                            </div>
+                            <div>
+                                <div class="text-[#ff00aa] text-xs tracking-widest mb-1">X / THREAD</div>
+                                <div id="ritual-thread" class="text-white/90 leading-snug whitespace-pre-line"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="text-[#ff00aa] text-xs tracking-widest mb-1">GORE-NEON VISUAL PROMPT</div>
+                                <div id="ritual-visual" class="text-white/90 leading-snug"></div>
+                            </div>
+                            <div>
+                                <div class="text-[#ff00aa] text-xs tracking-widest mb-1">SUNO / MUSIC PROMPT</div>
+                                <div id="ritual-music" class="text-white/90 leading-snug"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t border-white/10 flex items-center gap-x-3 text-xs">
+                        <button onclick="saveToGraveyard()" class="flex-1 py-3 rounded-2xl border border-white/20 hover:bg-white/5 flex items-center justify-center gap-x-2">
+                            <i class="fa-solid fa-book-skull"></i> <span>SAVE TO GRAVEYARD</span>
+                        </button>
+                        <button onclick="performRitual()" class="flex-1 py-3 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center gap-x-2">
+                            <span>ROLL AGAIN</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SWARM -->
+        <div id="content-3" class="tab-content hidden">
+            <div class="max-w-4xl">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <div class="text-[#ff00aa] text-sm tracking-widest">BADPANDA ORCHESTRA</div>
+                        <div class="text-3xl font-semibold tracking-tight">Live Multi-Agent Swarm</div>
+                    </div>
+                    <button onclick="summonSwarm()" class="neon-button px-6 py-2.5 text-sm rounded-2xl flex items-center gap-x-2">
+                        <i class="fa-solid fa-play"></i> <span>SUMMON FULL SWARM</span>
+                    </button>
+                </div>
+                
+                <div class="bg-black/70 border border-white/10 rounded-3xl p-2">
+                    <div id="swarm-log" class="agent-log h-[380px] overflow-y-auto p-6 space-y-5 text-sm font-mono">
+                        <!-- Populated live -->
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-3 mt-4">
+                    <button onclick="summonAgent('excavator')" class="px-5 py-2 text-xs rounded-2xl border border-white/20 hover:border-[#ff00aa]/60 flex items-center gap-x-2">
+                        <i class="fa-solid fa-digging text-[#ff00aa]"></i> <span>EXCAVATOR AGENT</span>
+                    </button>
+                    <button onclick="summonAgent('hookweaver')" class="px-5 py-2 text-xs rounded-2xl border border-white/20 hover:border-[#ff00aa]/60 flex items-center gap-x-2">
+                        <i class="fa-solid fa-magic text-[#00f3ff]"></i> <span>HOOK WEAVER</span>
+                    </button>
+                    <button onclick="summonAgent('visuallich')" class="px-5 py-2 text-xs rounded-2xl border border-white/20 hover:border-[#ff00aa]/60 flex items-center gap-x-2">
+                        <i class="fa-solid fa-palette text-[#9d4edd]"></i> <span>VISUAL LICH</span>
+                    </button>
+                    <button onclick="summonAgent('beatnecromancer')" class="px-5 py-2 text-xs rounded-2xl border border-white/20 hover:border-[#ff00aa]/60 flex items-center gap-x-2">
+                        <i class="fa-solid fa-music text-[#ff00aa]"></i> <span>BEAT NECROMANCER</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KALEIDO -->
+        <div id="content-4" class="tab-content hidden">
+            <div class="text-center mb-6">
+                <div class="text-[#ff00aa] text-sm tracking-widest">THE CRUCIBLE</div>
+                <div class="text-3xl font-semibold tracking-tight">Kaleido Crucible • Generative Gore-Neon</div>
+            </div>
+            
+            <div class="relative mx-auto" style="max-width: 820px;">
+                <canvas id="kaleido-canvas" width="820" height="520" 
+                        class="w-full rounded-3xl border border-white/10 bg-black cursor-crosshair"></canvas>
+                
+                <div class="absolute bottom-5 right-5 flex gap-x-2">
+                    <button onclick="triggerKaleidoBurst()" 
+                            class="bg-black/80 border border-white/30 hover:bg-black text-xs px-5 py-2 rounded-2xl flex items-center gap-x-2">
+                        <i class="fa-solid fa-bomb"></i> <span>BURST</span>
+                    </button>
+                    <button onclick="clearKaleido()" 
+                            class="bg-black/80 border border-white/30 hover:bg-black text-xs px-5 py-2 rounded-2xl">
+                        CLEAR
+                    </button>
+                </div>
+            </div>
+            <p class="text-center text-xs text-white/40 mt-3">Move mouse • Click to tear reality • Ritual generations intensify the storm</p>
+        </div>
+        
+    </div>
+
+    <!-- GRAVEYARD -->
+    <div id="graveyard" class="max-w-7xl mx-auto px-6 pb-20">
+        <div class="flex items-end justify-between mb-6">
+            <div>
+                <div class="text-[#ff00aa] text-sm tracking-[2px]">THE LEDGER</div>
+                <div class="text-4xl font-semibold tracking-tighter">Your Resurrection Graveyard</div>
+            </div>
+            <div class="text-right">
+                <div class="text-xs text-white/50">STREAK</div>
+                <div id="streak-count" class="font-mono text-4xl font-bold text-[#ff00aa]">12</div>
+            </div>
+        </div>
+        
+        <div id="graveyard-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Populated by JS from localStorage -->
+        </div>
+    </div>
+
+    <footer class="border-t border-white/10 py-8 text-center text-xs text-white/40">
+        FUSED IN THE NEON CHOP SHOP • PANDA NECROMANCER FORGE v2 • WEB AUDIO SYNTHESIS ACTIVE
+    </footer>
+
+    <script>
+        // Tailwind script
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#ff00aa');
+        }
+        
+        // Global state
+        let bloodLevel = 87;
+        let streak = 12;
+        let excavatedConcepts = [];
+        let selectedForFusion = [];
+        let graveyard = [];
+        
+        // Preloaded concepts from user's actual repos (fused knowledge)
+        const repoConcepts = [
+            { id: 1, title: "Memory Garden", desc: "Visual memory palace for AI interactions and personal knowledge resurrection", type: "visual" },
+            { id: 2, title: "BADPANDA Orchestra", desc: "Sovereign multi-agent orchestration package. First genesis artifact for incentive sorcery", type: "swarm" },
+            { id: 3, title: "Project Constellation", desc: "Agent-orchestrated command center with cyberpunk panda dashboard and GitHub connector", type: "command" },
+            { id: 4, title: "Shakespeare LLM Tokenizer", desc: "Train BPE, WordPiece, Unigram & SentencePiece from scratch on Tiny Shakespeare", type: "ml" },
+            { id: 5, title: "Shadow Pivot", desc: "Panda-Lich Multiplication Empire — Next.js math game with glowing panda-skull UI", type: "game" },
+            { id: 6, title: "KaleidoBeats", desc: "BPM-synced generative audio visualizer with crystalline neon whirlpool visuals", type: "visual" },
+            { id: 7, title: "Elite Agent Agency", desc: "Professional multi-agent AI system for maximum quality, efficiency and collaboration", type: "swarm" },
+            { id: 8, title: "AddictiForge DNA", desc: "Autonomous viral content agent with psychological hooks and variable rewards", type: "content" },
+        ];
+        
+        function updateMetrics() {
+            document.getElementById('blood-level').innerHTML = `${bloodLevel}/100`;
+            document.getElementById('streak-count').innerHTML = streak;
+        }
+        
+        function switchTab(tabIndex) {
+            // Hide all
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.forge-tab').forEach(el => el.classList.remove('active'));
+            
+            // Show selected
+            document.getElementById(`content-${tabIndex}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabIndex}`).classList.add('active');
+            
+            // Special inits
+            if (tabIndex === 1 && document.getElementById('fuse-concepts').children.length === 0) {
+                renderFuseConcepts();
+            }
+            if (tabIndex === 4) {
+                initKaleidoCanvas();
+            }
+        }
+        
+        // === EXCAVATE ===
+        function renderQuickExcavate() {
+            const container = document.getElementById('quick-excavate');
+            container.innerHTML = '';
+            
+            repoConcepts.slice(0, 6).forEach(concept => {
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-2xl border border-white/10 bg-black/40 hover:border-[#ff00aa]/50 cursor-pointer transition-all text-sm`;
+                div.innerHTML = `
+                    <div class="font-semibold">${concept.title}</div>
+                    <div class="text-xs text-white/60 line-clamp-2 mt-1">${concept.desc}</div>
+                `;
+                div.onclick = () => {
+                    excavateSpecificConcept(concept);
+                };
+                container.appendChild(div);
+            });
+        }
+        
+        function excavateSpecificConcept(concept) {
+            const resultEl = document.getElementById('excavate-result');
+            
+            const insight = generateExcavationInsight(concept);
+            
+            resultEl.innerHTML = `
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="px-3 py-px text-xs rounded-xl bg-[#ff00aa]/10 text-[#ff00aa]">${concept.type.toUpperCase()}</span>
+                    <span class="font-semibold">${concept.title}</span>
+                </div>
+                <div class="text-white/90">${insight}</div>
+                <div class="mt-4 text-xs flex gap-x-2">
+                    <button onclick="addToFusionFromExcavate('${concept.title}', '${concept.desc}')" class="px-4 py-1.5 rounded-xl border border-white/20 text-xs hover:bg-white/5">ADD TO FUSION CHAMBER</button>
+                </div>
+            `;
+            
+            // Add to excavated list
+            if (!excavatedConcepts.find(c => c.title === concept.title)) {
+                excavatedConcepts.push(concept);
+            }
+            
+            // Increase blood
+            bloodLevel = Math.min(100, bloodLevel + 4);
+            updateMetrics();
+        }
+        
+        function excavateIdea() {
+            const input = document.getElementById('excavate-input').value.trim();
+            if (!input) return;
+            
+            const resultEl = document.getElementById('excavate-result');
+            
+            const fakeTitle = input.split(' ').slice(0,3).join(' ') + " Resurrection";
+            const insight = generateCustomExcavation(input);
+            
+            resultEl.innerHTML = `
+                <div class="mb-2">
+                    <span class="text-xs px-3 py-px rounded-xl bg-white/10">CUSTOM EXCAVATION</span>
+                </div>
+                <div class="font-semibold text-lg mb-2">${fakeTitle}</div>
+                <div class="text-white/90">${insight}</div>
+                
+                <div class="mt-5 flex gap-x-2">
+                    <button onclick="addCustomToFusion('${fakeTitle}', '${input}')" class="text-xs px-5 py-2 rounded-2xl border border-[#ff00aa]/60 hover:bg-[#ff00aa]/10">FUSE THIS</button>
+                </div>
+            `;
+            
+            // Add to list
+            excavatedConcepts.push({id: Date.now(), title: fakeTitle, desc: input, type: 'custom'});
+            
+            bloodLevel = Math.min(100, bloodLevel + 7);
+            updateMetrics();
+            document.getElementById('excavate-input').value = '';
+        }
+        
+        function generateExcavationInsight(concept) {
+            const templates = [
+                `This ${concept.title} carries dormant agent DNA. When fused with panda necromancy it could birth a living ${concept.type} swarm that feels personal and addictive.`,
+                `Hidden in the stitches of ${concept.title} are psychological hooks. The right fusion will make users return daily like it's ritual.`,
+                `This concept is already half-resurrected. It wants to be stitched with neon visuals and multi-agent orchestration.`,
+                `The rotting core of ${concept.title} hides a variable reward loop. One fusion away from becoming dangerously compelling.`
+            ];
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+        
+        function generateCustomExcavation(text) {
+            return `The necromancer sees potential in these words. Hidden patterns suggest this could become a powerful fusion seed for ${['addictive hooks', 'generative visuals', 'agent swarms', 'music rituals'][Math.floor(Math.random()*4)]}. The stitches are already forming.`;
+        }
+        
+        function addToFusionFromExcavate(title, desc) {
+            selectedForFusion = [];
+            selectedForFusion.push({title, desc});
+            switchTab(1);
+            setTimeout(() => {
+                renderFuseConcepts();
+                // auto select it
+                const cards = document.querySelectorAll('#fuse-concepts > div');
+                cards.forEach(card => {
+                    if (card.dataset.title === title) card.click();
+                });
+            }, 300);
+        }
+        
+        function addCustomToFusion(title, desc) {
+            selectedForFusion = [];
+            selectedForFusion.push({title, desc});
+            switchTab(1);
+            setTimeout(renderFuseConcepts, 200);
+        }
+        
+        // === FUSE ===
+        function renderFuseConcepts() {
+            const container = document.getElementById('fuse-concepts');
+            container.innerHTML = '';
+            
+            const allConcepts = [...repoConcepts, ...excavatedConcepts];
+            
+            allConcepts.forEach((concept, index) => {
+                const isSelected = selectedForFusion.some(c => c.title === concept.title);
+                
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-2xl border cursor-pointer transition-all ${isSelected ? 'border-[#ff00aa] bg-[#ff00aa]/10' : 'border-white/10 hover:border-white/30 bg-black/40'}`;
+                div.dataset.title = concept.title;
+                
+                div.innerHTML = `
+                    <div class="flex justify-between">
+                        <div class="font-semibold text-sm">${concept.title}</div>
+                        ${isSelected ? '<i class="fa-solid fa-check text-[#ff00aa]"></i>' : ''}
+                    </div>
+                    <div class="text-xs text-white/60 mt-2 line-clamp-3">${concept.desc}</div>
+                `;
+                
+                div.onclick = () => {
+                    toggleFusionSelection(concept, div);
+                };
+                
+                container.appendChild(div);
+            });
+        }
+        
+        function toggleFusionSelection(concept, element) {
+            const exists = selectedForFusion.findIndex(c => c.title === concept.title);
+            
+            if (exists > -1) {
+                selectedForFusion.splice(exists, 1);
+                element.classList.remove('border-[#ff00aa]', 'bg-[#ff00aa]/10');
+                element.classList.add('border-white/10');
+            } else {
+                if (selectedForFusion.length >= 4) {
+                    alert("Maximum 4 corpses per fusion. The stitches can only hold so much.");
+                    return;
+                }
+                selectedForFusion.push(concept);
+                element.classList.add('border-[#ff00aa]', 'bg-[#ff00aa]/10');
+                element.classList.remove('border-white/10');
+            }
+        }
+        
+        function performFusion() {
+            if (selectedForFusion.length < 2) {
+                alert("Select at least 2 concepts to fuse. The necromancer needs more corpses.");
+                return;
+            }
+            
+            const type = document.getElementById('fusion-type').value;
+            const titles = selectedForFusion.map(c => c.title).join(" + ");
+            
+            // Create a fused concept
+            const fusedTitle = `FUSED: ${titles}`;
+            const fusedDesc = `A ${type} fusion of ${titles}. This stitched abomination carries the combined power of the selected tombs.`;
+            
+            // Show result + auto go to ritual
+            const resultHTML = `
+                <div class="p-6 border border-[#ff00aa]/40 bg-black/60 rounded-3xl">
+                    <div class="uppercase text-xs tracking-widest text-[#ff00aa]">FUSION COMPLETE</div>
+                    <div class="text-2xl font-semibold mt-2">${fusedTitle}</div>
+                    <div class="mt-3 text-white/80">${fusedDesc}</div>
+                    
+                    <button onclick="startRitualFromFusion('${fusedTitle}', '${fusedDesc}')" 
+                            class="mt-6 w-full py-4 rounded-2xl bg-gradient-to-r from-[#ff00aa] to-[#9d4edd] text-black font-bold flex items-center justify-center gap-x-2">
+                        <span>RESURRECT THIS FUSION</span>
+                    </button>
+                </div>
+            `;
+            
+            // Temporarily show in fuse area or switch
+            const fuseContent = document.getElementById('content-1');
+            const oldContent = fuseContent.innerHTML;
+            
+            fuseContent.innerHTML = resultHTML;
+            
+            setTimeout(() => {
+                if (confirm("Fusion complete. Move to the Resurrection Ritual?")) {
+                    switchTab(2);
+                    // restore later if needed
+                }
+            }, 1200);
+            
+            bloodLevel = Math.min(100, bloodLevel + 12);
+            updateMetrics();
+        }
+        
+        function startRitualFromFusion(title, desc) {
+            switchTab(2);
+            // Preload the ritual with this fusion
+            setTimeout(() => {
+                performRitual(true, title, desc);
+            }, 400);
+        }
+        
+        // === RESURRECT RITUAL (THE ADDICTIVE CORE) ===
+        let lastRitual = null;
+        
+        function performRitual(quick = false, preTitle = null, preDesc = null) {
+            const output = document.getElementById('ritual-output');
+            output.classList.remove('hidden');
+            
+            const rarityRoll = Math.random();
+            let rarity = "COMMON";
+            let rarityColor = "text-white/60";
+            
+            if (rarityRoll > 0.92) {
+                rarity = "LEGENDARY PANDA LICH";
+                rarityColor = "bg-gradient-to-r from-[#ff00aa] to-[#9d4edd] text-black";
+            } else if (rarityRoll > 0.75) {
+                rarity = "EPIC GORE-NEON";
+                rarityColor = "bg-[#9d4edd] text-black";
+            } else if (rarityRoll > 0.45) {
+                rarity = "RARE STITCHED";
+                rarityColor = "bg-[#00f3ff] text-black";
+            }
+            
+            const titles = [
+                "Neon Panda Resurrection Protocol",
+                "Gore-Hook Viral Cascade",
+                "Lich Queen Content Dominion",
+                "Swarm-Born Addiction Engine",
+                "Concrete Jungle Takeover Thread"
+            ];
+            
+            const title = preTitle || titles[Math.floor(Math.random() * titles.length)];
+            
+            // Generate intelligent feeling content
+            const hook = generateHook(title);
+            const thread = generateThread(title);
+            const visual = generateVisualPrompt(title);
+            const music = generateMusicPrompt(title);
+            
+            document.getElementById('ritual-rarity').innerHTML = `<span class="px-4 py-1 rounded-2xl text-xs font-bold ${rarityColor}">${rarity}</span>`;
+            document.getElementById('ritual-title').innerText = title;
+            document.getElementById('ritual-hook').innerText = hook;
+            document.getElementById('ritual-thread').innerText = thread;
+            document.getElementById('ritual-visual').innerText = visual;
+            document.getElementById('ritual-music').innerText = music;
+            
+            lastRitual = { title, hook, thread, visual, music, rarity, timestamp: new Date() };
+            
+            // Addictive juice
+            bloodLevel = Math.min(100, bloodLevel + (rarity.includes("LEGENDARY") ? 18 : 9));
+            streak = Math.min(99, streak + 1);
+            updateMetrics();
+            
+            // Trigger visuals
+            if (document.getElementById('kaleido-canvas')) {
+                triggerKaleidoBurst(3);
+            }
+            
+            // Play Web Audio Synthesis
+            if (typeof playNecroSynth === 'function') {
+                playNecroSynth(rarity);
+            }
+            
+            // Occasional rare event
+            if (rarityRoll > 0.88) {
+                setTimeout(() => {
+                    const log = document.getElementById('swarm-log');
+                    if (log) {
+                        const msg = document.createElement('div');
+                        msg.className = 'text-[#ff00aa] text-xs';
+                        msg.innerHTML = `⚡ LEGENDARY STITCH DETECTED — The Panda Lich smiles upon you.`;
+                        log.appendChild(msg);
+                        log.scrollTop = log.scrollHeight;
+                    }
+                }, 800);
+            }
+        }
+        
+        function generateHook(title) {
+            const hooks = [
+                `I just stitched together something that shouldn't exist. The panda necromancer is awake and it's hungry for your attention.`,
+                `This fusion broke my brain in the best way. Variable rewards + gore-neon aesthetics = dangerous addiction.`,
+                `What happens when you fuse ${title.split(':')[0] || 'dead repos'} with living panda agents? This.`
+            ];
+            return hooks[Math.floor(Math.random() * hooks.length)];
+        }
+        
+        function generateThread(title) {
+            return `1/ The Panda Necromancer just dropped ${title}.\n\n` +
+                   `2/ I excavated rotting concepts from my own graveyard and fused them in the chamber.\n\n` +
+                   `3/ The result is addictive as hell. Variable rarity. Real stitches.\n\n` +
+                   `4/ Try the ritual yourself. Your timeline will never be the same.`;
+        }
+        
+        function generateVisualPrompt(title) {
+            return `Battle-scarred cyberpunk panda necromancer, torn flesh restitched with electric pink and ultraviolet neon, glowing gold chains, volumetric fog, rain-slicked concrete, beautiful body horror, hyper detailed, cinematic lighting --ar 16:9 --stylize 250`;
+        }
+        
+        function generateMusicPrompt(title) {
+            return `Dark new age trap with boom-bap heart, glitchy witch house elements, heavy 808s, haunting panda vocal chops, neon rain atmosphere, 140bpm, cinematic and addictive`;
+        }
+        
+        function copyRitual() {
+            if (!lastRitual) return;
+            const text = `${lastRitual.title}\n\nHOOK: ${lastRitual.hook}\n\n${lastRitual.thread}\n\nVISUAL: ${lastRitual.visual}\n\nMUSIC: ${lastRitual.music}`;
+            navigator.clipboard.writeText(text).then(() => {
+                const btns = document.querySelectorAll('#ritual-output button');
+                if (btns.length) {
+                    const orig = btns[0].innerHTML;
+                    btns[0].innerHTML = 'COPIED!';
+                    setTimeout(() => { if (btns[0]) btns[0].innerHTML = orig; }, 1400);
+                }
+            });
+        }
+        
+        function saveToGraveyard() {
+            if (!lastRitual) return;
+            
+            graveyard.unshift(lastRitual);
+            if (graveyard.length > 12) graveyard.pop();
+            
+            localStorage.setItem('pandaNecroGraveyard', JSON.stringify(graveyard));
+            renderGraveyard();
+            
+            // visual feedback
+            const output = document.getElementById('ritual-output');
+            output.style.transition = 'all 0.3s';
+            output.style.boxShadow = '0 0 40px #ff00aa';
+            setTimeout(() => {
+                output.style.boxShadow = '';
+            }, 900);
+        }
+        
+        function renderGraveyard() {
+            const grid = document.getElementById('graveyard-grid');
+            grid.innerHTML = '';
+            
+            if (graveyard.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-8 text-white/40">No resurrections yet. Perform the ritual to begin filling the ledger.</div>`;
+                return;
+            }
+            
+            graveyard.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `creation-card p-5 rounded-3xl border border-white/10 bg-black/60 stitched`;
+                
+                const time = new Date(item.timestamp).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="text-xs text-white/50">${time}</div>
+                        <div class="text-[10px] px-2.5 py-px rounded-xl border border-white/20">${item.rarity}</div>
+                    </div>
+                    <div class="font-semibold mt-3 tracking-tight">${item.title}</div>
+                    <div class="text-xs text-white/70 mt-3 line-clamp-3">${item.hook}</div>
+                    
+                    <div class="flex gap-x-2 mt-5">
+                        <button onclick="loadFromGraveyard(${index})" class="flex-1 text-xs py-2 rounded-2xl border border-white/20 hover:bg-white/5">LOAD</button>
+                        <button onclick="deleteFromGraveyard(${index}, this)" class="flex-1 text-xs py-2 rounded-2xl border border-white/10 hover:bg-red-950/30 text-red-400/70">BURN</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function loadFromGraveyard(index) {
+            const item = graveyard[index];
+            switchTab(2);
+            
+            setTimeout(() => {
+                const output = document.getElementById('ritual-output');
+                output.classList.remove('hidden');
+                
+                document.getElementById('ritual-rarity').innerHTML = `<span class="px-4 py-1 rounded-2xl text-xs font-bold">${item.rarity}</span>`;
+                document.getElementById('ritual-title').innerText = item.title;
+                document.getElementById('ritual-hook').innerText = item.hook;
+                document.getElementById('ritual-thread').innerText = item.thread;
+                document.getElementById('ritual-visual').innerText = item.visual;
+                document.getElementById('ritual-music').innerText = item.music;
+                
+                lastRitual = item;
+            }, 200);
+        }
+        
+        function deleteFromGraveyard(index, el) {
+            if (confirm('Burn this resurrection from the ledger forever?')) {
+                graveyard.splice(index, 1);
+                localStorage.setItem('pandaNecroGraveyard', JSON.stringify(graveyard));
+                renderGraveyard();
+            }
+        }
+        
+        // === SWARM ===
+        function summonAgent(agentType) {
+            const log = document.getElementById('swarm-log');
+            
+            const messages = {
+                excavator: [
+                    "EXCAVATOR: I smell fresh rot in the graveyard. Another tomb just opened...",
+                    "EXCAVATOR: This concept has good bones. The stitches will hold.",
+                ],
+                hookweaver: [
+                    "HOOK WEAVER: Variable rewards detected. Users will chase this like blood in water.",
+                    "HOOK WEAVER: I just wove three psychological triggers into one sentence. Dangerous.",
+                ],
+                visuallich: [
+                    "VISUAL LICH: Neon tearing through flesh. The canvas is screaming in the best way.",
+                    "VISUAL LICH: I added glowing sutures and volumetric panda skulls. It's beautiful violence.",
+                ],
+                beatnecromancer: [
+                    "BEAT NECROMANCER: 140bpm. Boom-bap heart still beating under the glitch. Ready for Suno.",
+                    "BEAT NECROMANCER: This one wants to live in headphones at 3AM.",
+                ]
+            };
+            
+            const msgText = messages[agentType][Math.floor(Math.random() * messages[agentType].length)];
+            
+            const div = document.createElement('div');
+            div.className = `flex gap-x-3 text-xs ${agentType === 'excavator' ? 'text-orange-400' : agentType === 'hookweaver' ? 'text-[#00f3ff]' : agentType === 'visuallich' ? 'text-[#9d4edd]' : 'text-[#ff00aa]'}`;
+            div.innerHTML = `
+                <div class="w-5 h-5 flex-shrink-0 mt-0.5"><i class="fa-solid fa-robot"></i></div>
+                <div class="flex-1">${msgText}</div>
+            `;
+            
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+            
+            // Occasionally trigger visual
+            if (Math.random() > 0.6) triggerKaleidoBurst(1);
+        }
+        
+        function summonSwarm() {
+            const log = document.getElementById('swarm-log');
+            log.innerHTML = '';
+            
+            const order = ['excavator', 'hookweaver', 'visuallich', 'beatnecromancer'];
+            
+            order.forEach((agent, i) => {
+                setTimeout(() => {
+                    summonAgent(agent);
+                }, i * 650);
+            });
+            
+            setTimeout(() => {
+                const final = document.createElement('div');
+                final.className = 'text-center text-xs pt-4 text-white/40 border-t border-white/10 mt-4';
+                final.innerHTML = `— SWARM COMPLETE — The fusion is alive.`;
+                log.appendChild(final);
+            }, 2800);
+        }
+        
+        // === KALEIDO CANVAS ===
+        let kaleidoCtx;
+        let particles = [];
+        let mouseX = 0, mouseY = 0;
+        let isDrawing = false;
+        
+        function initKaleidoCanvas() {
+            const canvas = document.getElementById('kaleido-canvas');
+            if (!canvas || kaleidoCtx) return;
+            
+            kaleidoCtx = canvas.getContext('2d', { alpha: true });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+                
+                if (Math.random() > 0.7) createParticle(mouseX, mouseY, true);
+            });
+            
+            canvas.addEventListener('click', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                createTear(rect.width / 2, rect.height / 2);
+                triggerKaleidoBurst(2);
+            });
+            
+            // Initial gentle particles
+            for (let i = 0; i < 18; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.6,
+                    vy: (Math.random() - 0.5) * 0.6,
+                    size: Math.random() * 2.5 + 1,
+                    hue: Math.random() > 0.5 ? 330 : 190,
+                    alpha: Math.random() * 0.6 + 0.3
+                });
+            }
+            
+            animateKaleido();
+        }
+        
+        function createParticle(x, y, attracted = false) {
+            const canvas = document.getElementById('kaleido-canvas');
+            particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * (attracted ? 1.8 : 2.2),
+                vy: (Math.random() - 0.5) * (attracted ? 1.8 : 2.2),
+                size: Math.random() * 3.5 + 1.5,
+                hue: Math.random() > 0.6 ? 330 : (Math.random() > 0.5 ? 190 : 280),
+                alpha: Math.random() * 0.8 + 0.4,
+                life: 60 + Math.random() * 40
+            });
+        }
+        
+        function createTear(cx, cy) {
+            const canvas = document.getElementById('kaleido-canvas');
+            for (let i = 0; i < 22; i++) {
+                const angle = (i / 22) * Math.PI * 2;
+                particles.push({
+                    x: cx,
+                    y: cy,
+                    vx: Math.cos(angle) * (2 + Math.random() * 3),
+                    vy: Math.sin(angle) * (2 + Math.random() * 3),
+                    size: 2 + Math.random() * 3,
+                    hue: 330,
+                    alpha: 0.9,
+                    life: 35
+                });
+            }
+        }
+        
+        function animateKaleido() {
+            const canvas = document.getElementById('kaleido-canvas');
+            if (!canvas || !kaleidoCtx) return;
+            
+            kaleidoCtx.fillStyle = 'rgba(10,10,15,0.35)';
+            kaleidoCtx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                
+                // Mouse attraction
+                const dx = mouseX - p.x;
+                const dy = mouseY - p.y;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                
+                if (dist < 160) {
+                    p.vx += (dx / dist) * 0.12;
+                    p.vy += (dy / dist) * 0.12;
+                }
+                
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.982;
+                p.vy *= 0.982;
+                
+                if (p.life) p.life--;
+                
+                // Draw
+                kaleidoCtx.save();
+                kaleidoCtx.globalAlpha = p.alpha * (p.life ? p.life / 60 : 1);
+                kaleidoCtx.fillStyle = `hsl(${p.hue}, 100%, 75%)`;
+                kaleidoCtx.beginPath();
+                kaleidoCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                kaleidoCtx.fill();
+                
+                // Glow
+                kaleidoCtx.shadowColor = `hsl(${p.hue}, 100%, 70%)`;
+                kaleidoCtx.shadowBlur = 12;
+                kaleidoCtx.beginPath();
+                kaleidoCtx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
+                kaleidoCtx.fill();
+                kaleidoCtx.restore();
+                
+                if (p.life && p.life <= 0) {
+                    particles.splice(i, 1);
+                } else if (!p.life && (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height)) {
+                    particles.splice(i, 1);
+                }
+            }
+            
+            // Occasionally add new
+            if (Math.random() < 0.35 && particles.length < 65) {
+                createParticle(Math.random() * canvas.width, Math.random() * canvas.height);
+            }
+            
+            requestAnimationFrame(animateKaleido);
+        }
+        
+        function triggerKaleidoBurst(intensity = 1) {
+            const canvas = document.getElementById('kaleido-canvas');
+            if (!canvas) return;
+            
+            for (let i = 0; i < 14 * intensity; i++) {
+                createParticle(
+                    canvas.width / 2 + (Math.random() - 0.5) * 180, 
+                    canvas.height / 2 + (Math.random() - 0.5) * 180
+                );
+            }
+            
+            // extra tears
+            if (intensity > 1) {
+                createTear(canvas.width * 0.3, canvas.height * 0.4);
+                createTear(canvas.width * 0.7, canvas.height * 0.6);
+            }
+        }
+        
+        function clearKaleido() {
+            particles = [];
+            const canvas = document.getElementById('kaleido-canvas');
+            if (canvas && kaleidoCtx) {
+                kaleidoCtx.fillStyle = '#0a0a0f';
+                kaleidoCtx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+        
+        // Web Audio API Synthesis - Plug and Play
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        function playNecroSynth(rarity = "COMMON") {
+            if (!audioCtx) initAudio();
+            
+            const masterGain = audioCtx.createGain();
+            masterGain.gain.value = 0.7;
+            masterGain.connect(audioCtx.destination);
+
+            // Low drone
+            const drone = audioCtx.createOscillator();
+            drone.type = "sine";
+            drone.frequency.value = 48;
+            const droneGain = audioCtx.createGain();
+            droneGain.gain.value = 0.6;
+            const droneFilter = audioCtx.createBiquadFilter();
+            droneFilter.type = "lowpass";
+            droneFilter.frequency.value = 180;
+            drone.connect(droneFilter).connect(droneGain).connect(masterGain);
+            drone.start();
+
+            // Glitch saw lead
+            const lead = audioCtx.createOscillator();
+            lead.type = "sawtooth";
+            lead.frequency.value = rarity.includes("LEGENDARY") ? 880 : 440;
+            const leadGain = audioCtx.createGain();
+            leadGain.gain.value = 0.25;
+            const leadFilter = audioCtx.createBiquadFilter();
+            leadFilter.type = "bandpass";
+            leadFilter.frequency.value = 1200;
+            leadFilter.Q.value = 8;
+            lead.connect(leadFilter).connect(leadGain).connect(masterGain);
+            lead.start();
+
+            // Gore noise layer
+            const noise = audioCtx.createBufferSource();
+            const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+            noise.buffer = buffer;
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.value = rarity.includes("EPIC") ? 0.35 : 0.18;
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = "lowpass";
+            noiseFilter.frequency.value = 800;
+            noise.connect(noiseFilter).connect(noiseGain).connect(masterGain);
+            noise.start();
+
+            // Envelope
+            const now = audioCtx.currentTime;
+            masterGain.gain.setValueAtTime(0.7, now);
+            masterGain.gain.linearRampToValueAtTime(0.001, now + (rarity.includes("LEGENDARY") ? 4.2 : 2.8));
+
+            // Auto cleanup
+            setTimeout(() => {
+                drone.stop(); lead.stop(); noise.stop();
+            }, 4500);
+        }
+        
+        // === INIT EVERYTHING ===
+        function loadGraveyard() {
+            const saved = localStorage.getItem('pandaNecroGraveyard');
+            if (saved) {
+                graveyard = JSON.parse(saved);
+            }
+            renderGraveyard();
+        }
+        
+        function initQuickActions() {
+            // Keyboard support
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '/' && document.activeElement.tagName === "BODY") {
+                    e.preventDefault();
+                    const input = document.getElementById('excavate-input');
+                    if (input) input.focus();
+                }
+                if (e.key.toLowerCase() === 'r' && e.metaKey) {
+                    e.preventDefault();
+                    performRitual();
+                }
+            });
+            
+            // Random initial swarm message
+            setTimeout(() => {
+                const log = document.getElementById('swarm-log');
+                if (log && log.children.length === 0) {
+                    const div = document.createElement('div');
+                    div.className = 'text-xs text-white/40';
+                    div.innerHTML = `The swarm is sleeping. Summon agents or perform a ritual to wake them.`;
+                    log.appendChild(div);
+                }
+            }, 1400);
+        }
+        
+        function bootstrap() {
+            initTailwind();
+            updateMetrics();
+            renderQuickExcavate();
+            loadGraveyard();
+            initQuickActions();
+            
+            // Boot with Excavate tab active
+            document.getElementById('content-0').classList.remove('hidden');
+            document.getElementById('tab-0').classList.add('active');
+            
+            // Seed one excavated concept
+            setTimeout(() => {
+                const result = document.getElementById('excavate-result');
+                if (result && result.innerHTML.includes('Excavate something')) {
+                    result.innerHTML = `
+                        <div class="text-xs text-white/50 mb-1">AUTO-EXCAVATED FROM MEMORY</div>
+                        <div class="font-semibold">Project Constellation + BADPANDA DNA</div>
+                        <div class="text-sm mt-2 text-white/80">This fusion wants to become the ultimate addictive command center. The panda is already smiling.</div>
+                    `;
+                }
+            }, 900);
+            
+            // Easter egg: click logo to burst
+            const logo = document.querySelector('nav .flex.items-center');
+            if (logo) {
+                logo.style.cursor = 'pointer';
+                logo.onclick = () => {
+                    const canvas = document.getElementById('kaleido-canvas');
+                    if (canvas) {
+                        triggerKaleidoBurst(2);
+                        switchTab(4);
+                    } else {
+                        performRitual(true);
+                    }
+                };
+            }
+            
+            console.log('%c[PANDA NECROMANCER] Beast initialized. Web Audio synthesis active. The concrete jungle is listening.', 'color:#ff00aa');
+        }
+        
+        window.onload = bootstrap;
+    </script>
+</body>
+</html>
